@@ -49,7 +49,7 @@ def send_next_question(chat_id, user_id):
     print('next')####################
     user_data[user_id]["current_question"] += 1
     print(user_data[user_id]["current_question"], user_data[user_id]["score"],)########################
-    if user_data[user_id]["current_question"] > 20:
+    if user_data[user_id]["current_question"] > 10:
         end_time = time.time()#конец времени
         total_time = end_time - user_data[user_id]["start_time"]
         if user_data[user_id]['score']==user_data[user_id]["current_question"]-1:
@@ -65,12 +65,12 @@ def send_next_question(chat_id, user_id):
 
     print(user_data)
 
-    if user_data[user_id]["current_question"] <11:
+    if user_data[user_id]["current_question"] <8:
             problem, answer = primer(1)
             #проверка на то что пример уже попадался
             while problem in user_data[user_id]['list']:
                 problem, answer = primer(1)
-    elif user_data[user_id]["current_question"] < 16:
+    elif user_data[user_id]["current_question"] < 11:
             problem, answer = primer(2)
             # проверка на то что пример уже попадался
             while problem in user_data[user_id]['list']:
@@ -146,8 +146,8 @@ def handle_message(message):
             user_data[user_id]["state"] = SENDING_NEXT_QUESTION
             send_next_question(message.chat.id, user_id)
             print(user_data)
-            if user_data:
-                user_data[user_id]["state"] = WAITING_FOR_ANSWER
+            if user_id in user_data:
+                    user_data[user_id]["state"] = WAITING_FOR_ANSWER
 
         except ValueError:
             bot.send_message(message.chat.id, "Пожалуйста, введите число.")
