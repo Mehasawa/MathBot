@@ -20,7 +20,7 @@ THIRD_CHOICE = 3
 
 # Словарь для хранения состояния и данных для каждого пользователя
 user_data = {}
-QLEN=4
+QUESTIONLEN=4
 
 # Создание клавиатуры с кнопками и эмодзи
 keyboard1 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -32,7 +32,7 @@ keyboard2 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
 buttons = [telebot.types.KeyboardButton(f"👍 Уровень {i}") for i in range(1, 7)]
 keyboard2.add(*buttons)
 
-keyboard3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+keyboard3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 # button1 = telebot.types.KeyboardButton("👍 Тема1")  # Эмодзи 👍
 # button2 = telebot.types.KeyboardButton("👍 Тема2")  # Эмодзи 👍
 # button3 = telebot.types.KeyboardButton("👍 Тема3")  # Эмодзи 👍
@@ -56,7 +56,9 @@ def show_third_choice_keyboard(message,k):
              ['Вычисления','НОД и НОК','Сравнения','Задачи','Координатная прямая','Задачи 6.3','Геометрия']]
     k=int(k[-1])
     print(k)
+    keyboard3.keyboard=[]
     buttons = [telebot.types.KeyboardButton(f"👍 Тема {i}") for i in spisokTem[k]]
+    print(buttons)
     keyboard3.add(*buttons)
     bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard3)
 
@@ -75,7 +77,7 @@ def send_next_question(chat_id, user_id,message):
     print('next')####################
     user_data[user_id]["current_question"] += 1
     print(user_data[user_id]["current_question"], user_data[user_id]["score"],)########################
-    if user_data[user_id]["current_question"] > QLEN:
+    if user_data[user_id]["current_question"] > QUESTIONLEN:
         end_time = time.time()#конец времени
         total_time = end_time - user_data[user_id]["start_time"]
         if user_data[user_id]['score']==user_data[user_id]["current_question"]-1:
@@ -136,7 +138,7 @@ def start(message):
     }
     bot.send_message(message.chat.id, f"Привет! {studentname} Это MathBot, выберите режим:", reply_markup=keyboard1)
 
-def start_reg(message):
+def choicerezhim(message):
     user_id = message.from_user.id
     if 'Тренировка' in user_data[user_id]['first_choice']:
         training(message,user_data[user_id]['second_choice'],user_data[user_id]['third_choice'])
@@ -198,7 +200,7 @@ def handle_message(message):
                 bot.send_message(message.chat.id, f"#-{user_data[user_id]['first_choice']}"
                                                   f"#-{user_data[user_id]['second_choice']}"
                                                   f"#-{user_data[user_id]['third_choice']}")
-                start_reg(message)
+                choicerezhim(message)
             else:
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
 

@@ -10,15 +10,16 @@ cursor.execute('''
         level INTEGER,
         tema TEXT,
         task TEXT,
-        taskimg BLOB
+        taskimg BLOB,
+        solve TEXT
     )
 ''')
 
 # Добавление начальных фамилий
 
 for i in range(1,9):
-    cursor.execute("INSERT INTO zadachi (level,tema, task,taskimg)"
-                   " VALUES (?,?,?,?) ", (i,'тема','задача','NULL'))
+    cursor.execute("INSERT INTO zadachi (level,tema, task,taskimg,solve)"
+                   " VALUES (?,?,?,?,?) ", (i,'тема','задача','NULL','NULL'))
 
 
 # Сохранение изменений и закрытие соединения

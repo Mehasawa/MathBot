@@ -47,41 +47,6 @@ def newscore(name,score):
         conn.close()
     showscore(name)
     pass
-# Пример использования
-#     surnames_list = get_all_surnames()
-#     print("Список всех фамилий с рекордами:")
-#     for surname, hiscore in surnames_list:
-#         print(f"Фамилия: {surname}, Рекорд: {hiscore}")
 
-
-
-#
-# searched_surname = "Петров"
-# result = find_surname(searched_surname)
-# if result:
-#     surname, hiscore = result
-#     print(f"Найдена фамилия {surname}, рекорд: {hiscore}")
-# else:
-#    print(f"Фамилия {searched_surname} не найдена")
-#
-# new_hiscore = 15
-# update_hiscore(searched_surname, new_hiscore)
-# print(f"Рекорд пользователя {searched_surname} изменен на {new_hiscore}")
-#
-# result = find_surname(searched_surname)
-# if result:
-#     surname, hiscore = result
-#     print(f"Проверка: Найдена фамилия {surname}, рекорд: {hiscore}")
-# else:
-#    print(f"Фамилия {searched_surname} не найдена")
-#
-#
-# searched_surname = "Кротов"
-# result = find_surname(searched_surname)
-# if result:
-#     surname, hiscore = result
-#     print(f"Найдена фамилия {surname}, рекорд: {hiscore}")
-# else:
-#    print(f"Фамилия {searched_surname} не найдена")
 
 
