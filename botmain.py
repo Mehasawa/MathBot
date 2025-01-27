@@ -1,6 +1,6 @@
 import time
 import random
-
+import main
 import telebot
 import sqlite3
 
@@ -65,6 +65,7 @@ def send_next_question(chat_id, user_id):
             bot.send_message(chat_id,
                       f"Поздравляем, вы прошли без ошибок.\nВремя прохождения: {total_time:.2f} секунд.",
                              reply_markup=keyboard)
+            main.newscore(user_data[user_id]['studentname'],total_time)
         else:
 
             bot.send_message(chat_id,
@@ -97,18 +98,21 @@ def send_next_question(chat_id, user_id):
     user_data[user_id]["answer"] = answer
 
     bot.send_message(chat_id, problem)
+def whatname(message):
+    if message.from_user.first_name and message.from_user.last_name:
+        studentname = f'{message.from_user.first_name} {message.from_user.last_name}'
+    elif message.from_user.first_name:
+        studentname = message.from_user.first_name
+    else:
+        studentname = message.from_user.username
+    return studentname
 
-#СТАРТОВОЕ СООБЩЕНИЕ
+#СТАРТОВОЕ СООБЩЕНИЕ:
 @bot.message_handler(commands=['start'])
 def start(message):
     print(message)
-    if message.from_user.first_name and message.from_user.last_name:
-        name = f'{message.from_user.first_name} {message.from_user.last_name}'
-    elif message.from_user.first_name:
-        name = message.from_user.first_name
-    else:
-        name = message.from_user.username
-    bot.send_message(message.chat.id, f"Привет! {name} Это MathBot, выберите режим:", reply_markup=keyboard)
+    studentname=whatname(message)
+    bot.send_message(message.chat.id, f"Привет! {studentname} Это MathBot, выберите режим:", reply_markup=keyboard)
 
 #РЕЖИМ ТЕРНИРОВКИ
 @bot.message_handler(func=lambda message: message.text == "👍 Тренировка")
@@ -129,12 +133,14 @@ def button2_handler(message):
         "answer": None,
         "start_time": time.time(),
         'list':[],
+        'studentname':''
     }
     bot.send_message(message.chat.id, "Соревновательный режим 🚀!",reply_markup=telebot.types.ReplyKeyboardRemove())
     for i in range(3):#обратный отсчет
         time.sleep(1)
         bot.send_message(message.chat.id,spisokemo[i])
     user_data[user_id]['start_time']=time.time()#старт времени
+    user_data[user_id]['studentname']=whatname(message)
     send_next_question(message.chat.id, user_id)
 
 
