@@ -29,14 +29,14 @@ button2 = telebot.types.KeyboardButton("🚀 Соревнование")  # Эм�
 keyboard1.add(button1, button2)
 
 keyboard2 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-buttons = [telebot.types.KeyboardButton(f"👍 Уровень {i}") for i in range(1, 10)]
+buttons = [telebot.types.KeyboardButton(f"👍 Уровень {i}") for i in range(1, 7)]
 keyboard2.add(*buttons)
 
 keyboard3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-button1 = telebot.types.KeyboardButton("👍 Тема1")  # Эмодзи 👍
-button2 = telebot.types.KeyboardButton("👍 Тема2")  # Эмодзи 👍
-button3 = telebot.types.KeyboardButton("👍 Тема3")  # Эмодзи 👍
-keyboard3.add(button1, button2, button3)
+# button1 = telebot.types.KeyboardButton("👍 Тема1")  # Эмодзи 👍
+# button2 = telebot.types.KeyboardButton("👍 Тема2")  # Эмодзи 👍
+# button3 = telebot.types.KeyboardButton("👍 Тема3")  # Эмодзи 👍
+# keyboard3.add(button1, button2, button3)
 #ПОКАЗАТЬ КЛАВИАТУРЫ
 def show_first_choice_keyboard(message):
     bot.send_message(message.chat.id, "Выберите режим:", reply_markup=keyboard1)
@@ -44,7 +44,20 @@ def show_first_choice_keyboard(message):
 def show_second_choice_keyboard(message):
     bot.send_message(message.chat.id, "Выберите уровень:", reply_markup=keyboard2)
 
-def show_third_choice_keyboard(message):
+def show_third_choice_keyboard(message,k):
+    spisokTem =[['0 уровень'],
+             ['Арифметика','Задачи','Фигуры','Информация'],
+             ['Арифметика','Задачи','Фигуры','Периметр'],
+             ['Площадь','Задачи','Фигуры','Информация'],
+             ['Величины','Арифметика','Задачи на движение','Задачи на работу','Задачи купли-продажи',
+              'Уравнения','Порядок действий'],
+             ['Вычисления','Преобразования','Сравнения','Признаки делимости','Округление',
+              'Задачи','Величины','Геометрия','Координатный луч'],
+             ['Вычисления','НОД и НОК','Сравнения','Задачи','Координатная прямая','Задачи 6.3','Геометрия']]
+    k=int(k[-1])
+    print(k)
+    buttons = [telebot.types.KeyboardButton(f"👍 Тема {i}") for i in spisokTem[k]]
+    keyboard3.add(*buttons)
     bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard3)
 
 
@@ -72,8 +85,8 @@ def send_next_question(chat_id, user_id,message):
             # start(message)
         else:
             bot.send_message(chat_id,
-                             f"Поздравляем, у вас {user_data[user_id]["current_question"]-user_data[user_id]["score"]-1} "
-                             f"ошиб{generate_error_message(user_data[user_id]["current_question"]-user_data[user_id]["score"]-1)}. Время не засчитано.")
+                             f"Поздравляем, у вас {user_data[user_id]['current_question']-user_data[user_id]['score']-1} "
+                             f"ошиб{generate_error_message(user_data[user_id]['current_question']-user_data[user_id]['score']-1)}. Время не засчитано.")
             print('#########################')
             print(user_data[user_id]["state"])
             print(user_data[user_id])
@@ -171,7 +184,7 @@ def handle_message(message):
             if  'Уровень' in message.text:
                 user_data[user_id]["second_choice"] = message.text
                 user_data[user_id]["state_choice"] = THIRD_CHOICE
-                show_third_choice_keyboard(message)
+                show_third_choice_keyboard(message,message.text)
             else:
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
 
@@ -182,9 +195,9 @@ def handle_message(message):
                 user_data[user_id]["third_choice"] = message.text
                 user_data[user_id]['start']=1
                 bot.send_message(message.chat.id, "Ваши выборы записаны!", reply_markup=types.ReplyKeyboardRemove())
-                bot.send_message(message.chat.id, f'#-{user_data[user_id]['first_choice']}'
-                                                  f'#-{user_data[user_id]['second_choice']}'
-                                                  f'#-{user_data[user_id]['third_choice']}')
+                bot.send_message(message.chat.id, f"#-{user_data[user_id]['first_choice']}"
+                                                  f"#-{user_data[user_id]['second_choice']}"
+                                                  f"#-{user_data[user_id]['third_choice']}")
                 start_reg(message)
             else:
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
