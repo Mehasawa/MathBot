@@ -54,10 +54,10 @@ def show_third_choice_keyboard(message,k):
               'Задачи','Величины','Геометрия','Координатный луч'],
              ['🔥Вычисления','НОД и НОК','Сравнения','Задачи','Координатная прямая','Задачи 6.3','Геометрия']]
     k=int(k[-1])
-    print(k)
+    # print(k)
     keyboard3.keyboard=[]
     buttons = [telebot.types.KeyboardButton(f"👍 Тема {i}") for i in spisokTem[k]]
-    print(buttons)
+    # print(buttons)
     keyboard3.add(*buttons)
     bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard3)
 
@@ -149,12 +149,10 @@ def choicerezhim(message):
     pass
 
 #РЕЖИМ ТЕРНИРОВКИ
-
 def training(message,l,t):
     bot.send_message(message.chat.id, "Режим тренировки 👍!", reply_markup=telebot.types.ReplyKeyboardRemove())
 
 #РЕЖИМ СОРЕВНОВАНИЯ
-
 def competitive(message,l,t):
     spisokemo = ['3️⃣', '2️⃣', '1️⃣']
     user_id = message.from_user.id
