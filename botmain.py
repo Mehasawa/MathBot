@@ -32,7 +32,13 @@ keyboard2 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
 buttons = [telebot.types.KeyboardButton(f"👍 Уровень {i}") for i in range(1, 7)]
 keyboard2.add(*buttons)
 
-keyboard3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+keyboard3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+keyboardSRAVN = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+button1 = telebot.types.KeyboardButton("<")  #
+button2 = telebot.types.KeyboardButton(">")  #
+button3 = telebot.types.KeyboardButton("=")  #
+keyboardSRAVN.add(button1, button2, button3)
 '''
  Эмодзи 👍😐😀👆🚀🔥
 '''
@@ -46,17 +52,17 @@ def show_second_choice_keyboard(message):
 def show_third_choice_keyboard(message,k):
     spisokTem =[['0 уровень'],
              ['🔥Арифметика','Задачи','Фигуры','Информация'],
-             ['🔥Арифметика','Задачи','Фигуры','Периметр'],
-             ['🔥Вычисления','Площадь','Задачи','Фигуры','Информация'],
+             ['🔥Арифметика','Задачи','Фигуры','Периметр','🚀Сравнения'],
+             ['🔥Вычисления','Площадь','Задачи','Фигуры','Информация','🚀Сравнения'],
              ['Величины','🔥Арифметика','Задачи на движение','Задачи на работу','Задачи купли-продажи',
               'Уравнения','Порядок действий'],
-             ['🔥Вычисления','Преобразования','Сравнения','Признаки делимости','Округление',
+             ['🔥Вычисления','Преобразования','🚀Сравнения','Признаки делимости','Округление',
               'Задачи','Величины','Геометрия','Координатный луч'],
-             ['🔥Вычисления','НОД и НОК','Сравнения','Задачи','Координатная прямая','Задачи 6.3','Геометрия']]
+             ['🔥Вычисления','НОД и НОК','🚀Сравнения','Задачи','Координатная прямая','Задачи 6.3','Геометрия']]
     k=int(k[-1])
     # print(k)
     keyboard3.keyboard=[]
-    buttons = [telebot.types.KeyboardButton(f"👍 Тема {i}") for i in spisokTem[k]]
+    buttons = [telebot.types.KeyboardButton(f"{i}") for i in spisokTem[k]]
     # print(buttons)
     keyboard3.add(*buttons)
     bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard3)
@@ -97,12 +103,23 @@ def send_next_question(chat_id, user_id,message):
         return
 
     print(user_data)
-
-    problem,answer = fromGenerate.taskcount(message,user_data)
-    user_data[user_id]['list'].append(problem) #в список примеров
-    user_data[user_id]["problem"] = problem
-    user_data[user_id]["answer"] = answer
-    bot.send_message(chat_id, problem)
+    if user_data[user_id]["start"]==1:
+        if user_data[user_id]["type_question"]=='srav':
+            ########################################################################################
+            keyb=keyboardSRAVN
+            problem, answer = fromGenerate.taskcount(message, user_data)  # вопрос из генерации
+        elif user_data[user_id]["type_question"] == 'base':
+            pass
+                # keyb = keyboardBAZA
+                # problem, answer = fromBaseZadachi.taskcount(message, user_data)  # вопрос из базы
+        else:
+            keyb=types.ReplyKeyboardRemove()
+            # keyb = keyboardSRAVN
+            problem,answer = fromGenerate.taskcount(message,user_data)#вопрос из генерации
+        user_data[user_id]['list'].append(problem) #в список примеров
+        user_data[user_id]["problem"] = problem
+        user_data[user_id]["answer"] = answer
+        bot.send_message(chat_id, problem ,reply_markup=keyb)
 
 def whatname(message):
     if message.from_user.first_name and message.from_user.last_name:
@@ -127,6 +144,7 @@ def start(message):
         "second_choice": None,
         "third_choice": None,
         "current_question": 0,
+        "type_question":'number',
         "score": 0,
         "problem": None,
         "answer": None,
@@ -171,6 +189,7 @@ def handle_message(message):
     user_id = message.from_user.id
     # print(user_id)#################################
     if user_id not in user_data:
+        bot.send_message(message.chat.id, "Напишите команду /start")
         return
     state_choice = user_data[user_id]["state_choice"]
     if user_data[user_id]['start']==0:
@@ -192,21 +211,26 @@ def handle_message(message):
 
         elif state_choice == THIRD_CHOICE:
             # print(message.text)
-            if 'Тема' in message.text:
-
+            # if 'Тема' in message.text:
+                if 'Сравнени' in message.text:
+                    user_data[user_id]['type_question']='srav'
                 user_data[user_id]["third_choice"] = message.text
                 user_data[user_id]['start']=1
-                bot.send_message(message.chat.id, "Ваши выборы записаны!", reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(message.chat.id, "Выбор записан.", reply_markup=types.ReplyKeyboardRemove())
                 bot.send_message(message.chat.id, f"#-{user_data[user_id]['first_choice']}"
                                                   f"#-{user_data[user_id]['second_choice']}"
                                                   f"#-{user_data[user_id]['third_choice']}")
                 choicerezhim(message)
-            else:
-                bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
+            # else:
+            #     bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
+
 
     if user_data[user_id]["state"] == WAITING_FOR_ANSWER and user_data[user_id]["start"]:
         try:
-            user_answer = int(message.text)
+            if user_data[user_id]["type_question"]=='number':
+                user_answer = int(message.text)
+            else:
+                user_answer = message.text
             correct_answer = user_data[user_id]["answer"]
             # print(user_data)
             if user_answer == correct_answer:
@@ -222,7 +246,8 @@ def handle_message(message):
                     user_data[user_id]["state"] = WAITING_FOR_ANSWER
 
         except ValueError:
-            bot.send_message(message.chat.id, "Пожалуйста, введите число.")
+            pass
+            # bot.send_message(message.chat.id, "Пожалуйста, введите число.")
 
 # Запуск бота
 bot.polling(none_stop=True)
