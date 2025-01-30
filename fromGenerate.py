@@ -17,24 +17,23 @@ def task_level(message, user_data):#собирает инфу
     lvl =  int(user_data[user_id]['second_choice'][-1])
     rezhim = user_data[user_id]['first_choice']
     return tema,lvl,rezhim
-    pass
+
 
 def taskcount(message,user_data):#цикл задач
     user_id = message.from_user.id
     tema,lvl,rezhim = task_level(message,user_data)#############
-
     if 'Тренировка' in rezhim:
         COUNT = START1
     else:
         COUNT = START2
     if user_data[user_id]["current_question"] <= COUNT:
-        if 'Арифметика' in tema or 'Вычисления' in tema:
+        if 'Арифмет' in tema or 'Вычисл' in tema:
             print('111')
             problem, answer = primer(lvl)
             #проверка на то что пример уже попадался
             while problem in user_data[user_id]['list']:
                 problem, answer = primer(lvl)
-        elif 'Сравнения' in tema:
+        if 'Сравн' in tema:
             print('222')
             problem, answer = sravn(lvl)
             # проверка на то что пример уже попадался

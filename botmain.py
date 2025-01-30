@@ -107,12 +107,13 @@ def send_next_question(chat_id, user_id,message):
         if user_data[user_id]["type_question"]=='srav':
             ########################################################################################
             keyb=keyboardSRAVN
+            # keyb = types.ReplyKeyboardRemove()
             problem, answer = fromGenerate.taskcount(message, user_data)  # вопрос из генерации
         elif user_data[user_id]["type_question"] == 'base':
             pass
                 # keyb = keyboardBAZA
                 # problem, answer = fromBaseZadachi.taskcount(message, user_data)  # вопрос из базы
-        else:
+        elif user_data[user_id]["type_question"] == 'number':
             keyb=types.ReplyKeyboardRemove()
             # keyb = keyboardSRAVN
             problem,answer = fromGenerate.taskcount(message,user_data)#вопрос из генерации
@@ -129,6 +130,14 @@ def whatname(message):
     else:
         studentname = message.from_user.username
     return studentname
+
+def temaDef(m):
+    if 'Сравн' in m.text:
+        return 'srav'
+    elif 'Арифм' in m.text or 'Вычисл' in m.text:
+        return 'number'
+    else:
+        return 'base'
 
 #СТАРТОВОЕ СООБЩЕНИЕ:
 @bot.message_handler(commands=['start'])
@@ -210,10 +219,7 @@ def handle_message(message):
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
 
         elif state_choice == THIRD_CHOICE:
-            # print(message.text)
-            # if 'Тема' in message.text:
-                if 'Сравнени' in message.text:
-                    user_data[user_id]['type_question']='srav'
+                user_data[user_id]['type_question']=temaDef(message)
                 user_data[user_id]["third_choice"] = message.text
                 user_data[user_id]['start']=1
                 bot.send_message(message.chat.id, "Выбор записан.", reply_markup=types.ReplyKeyboardRemove())
@@ -230,7 +236,7 @@ def handle_message(message):
             if user_data[user_id]["type_question"]=='number':
                 user_answer = int(message.text)
             else:
-                user_answer = message.text
+                user_answer = message.text####!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             correct_answer = user_data[user_id]["answer"]
             # print(user_data)
             if user_answer == correct_answer:
@@ -242,12 +248,14 @@ def handle_message(message):
             user_data[user_id]["state"] = SENDING_NEXT_QUESTION
             send_next_question(message.chat.id, user_id,message)
             print(user_data)
-            if user_id in user_data:
-                    user_data[user_id]["state"] = WAITING_FOR_ANSWER
 
         except ValueError:
             pass
             # bot.send_message(message.chat.id, "Пожалуйста, введите число.")
+    if user_id in user_data:
+                    user_data[user_id]["state"] = WAITING_FOR_ANSWER
+
+
 
 # Запуск бота
 bot.polling(none_stop=True)
