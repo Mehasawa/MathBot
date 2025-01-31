@@ -232,26 +232,29 @@ def handle_message(message):
 
 
     if user_data[user_id]["state"] == WAITING_FOR_ANSWER and user_data[user_id]["start"]:
-        try:
+            user_answer ='none'
             if user_data[user_id]["type_question"]=='number':
-                user_answer = int(message.text)
-            else:
-                user_answer = message.text####!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    try:
+                        user_answer = int(message.text)
+                    except ValueError:
+                        bot.send_message(message.chat.id, "Пожалуйста, введите число.")
+            elif user_data[user_id]["type_question"]=='srav':
+                if message.text in ['<','>','=']:
+                    user_answer = message.text####
+                else:
+                    bot.send_message(message.chat.id, "Пожалуйста, введите правильный знак.")
             correct_answer = user_data[user_id]["answer"]
             # print(user_data)
-            if user_answer == correct_answer:
-                user_data[user_id]["score"] += 1
-                bot.send_message(message.chat.id, "Правильно!")
-            else:
-                bot.send_message(message.chat.id, f"Неправильно! Правильный ответ: {correct_answer}")
+            if user_answer!='none':
+                if user_answer == correct_answer:
+                    user_data[user_id]["score"] += 1
+                    bot.send_message(message.chat.id, "Правильно!")
+                else:
+                    bot.send_message(message.chat.id, f"Неправильно! Правильный ответ: {correct_answer}")
 
-            user_data[user_id]["state"] = SENDING_NEXT_QUESTION
-            send_next_question(message.chat.id, user_id,message)
+                user_data[user_id]["state"] = SENDING_NEXT_QUESTION
+                send_next_question(message.chat.id, user_id,message)
             print(user_data)
-
-        except ValueError:
-            pass
-            # bot.send_message(message.chat.id, "Пожалуйста, введите число.")
     if user_id in user_data:
                     user_data[user_id]["state"] = WAITING_FOR_ANSWER
 
