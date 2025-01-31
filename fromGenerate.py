@@ -78,8 +78,8 @@ def sravn(lvl=1):
             num2 = random.randint(2, 99)
             num3 = random.randint(2, 99)
             num4 = random.randint(2, 99)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act2} {num4}'
-            answer = sravnRes(preobrRes(num1,num2,act1),preobrRes(num3,num4,act2))
+            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+            answer = sravnRes(preobrRes(num1,num2,act1),preobrRes(num3,num4,act1))
             if num1>num2 and num3>num4:
                 proverka = True
         elif lvl==4:
@@ -89,8 +89,8 @@ def sravn(lvl=1):
             num2 = random.randint(12, 990)
             num3 = random.randint(12, 990)
             num4 = random.randint(12, 990)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act2} {num4}'
-            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act2))
+            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
             if num1 > num2 and num3 > num4:
                 if act1=='/':
                     res=num1/num2
@@ -98,13 +98,13 @@ def sravn(lvl=1):
                         proverka = True
                     else:
                         proverka=False
-                if act2=='/':
+                # if act2=='/':
                     res=num3/num4
                     if res.is_integer():
                         proverka = True
                     else:
                         proverka = False
-                if act1!='/' and act2!='/':
+                if act1!='/':# and act2!='/':
                     proverka=True
         elif lvl==5:
             act1 = random.choice(['+', '-', '*', '/'])
@@ -113,8 +113,8 @@ def sravn(lvl=1):
             num2 = random.randint(12, 99)
             num3 = random.randint(12, 99)
             num4 = random.randint(12, 99)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act2} {num4}'
-            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act2))
+            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
             if num1 > num2 and num3 > num4:
                     res1 = num1 / num2
                     res2 = num3 / num4
@@ -129,8 +129,8 @@ def sravn(lvl=1):
             num2 = random.randint(-99, 99)
             num3 = random.randint(-99, 99)
             num4 = random.randint(-99, 99)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act2} {num4}'
-            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act2))
+            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
             res1 = num1 / num2
             res2 = num3 / num4
             if count_decimal_places(res1) <= 2 and count_decimal_places(res2) <= 2:
