@@ -62,6 +62,14 @@ def sravnRes(n1,n2):
     else:
         return '='
 
+def rand0(n1,n2):
+    n=0
+    while n==0:
+        n=random.randint(-99,99)
+    return n
+
+
+
 def sravn(lvl=1):
     proverka = False
     while not proverka:
@@ -109,34 +117,49 @@ def sravn(lvl=1):
         elif lvl==5:
             act1 = random.choice(['+', '-', '*', '/'])
             act2 = random.choice(['+', '-', '*', '/'])
-            num1 = random.randint(12, 99)
-            num2 = random.randint(12, 99)
-            num3 = random.randint(12, 99)
-            num4 = random.randint(12, 99)
+            num1 = round(random.uniform(12, 99),2)
+            num2 = round(random.uniform(12, 99),2)
+            num3 = round(random.uniform(12, 99),2)
+            num4 = round(random.uniform(12, 99),2)
+            print(num1, num2, num3, num4)
             problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
             answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
             if num1 > num2 and num3 > num4:
+                if act1=='/':
                     res1 = num1 / num2
                     res2 = num3 / num4
                     if count_decimal_places(res1)<=2 and count_decimal_places(res2)<=2:
                         proverka = True
                     else:
                         proverka = False
+                else:
+                    proverka=True
         elif lvl==6:
             act1 = random.choice(['+', '-', '*', '/'])
             act2 = random.choice(['+', '-', '*', '/'])
-            num1 = random.randint(-99, 99)
-            num2 = random.randint(-99, 99)
-            num3 = random.randint(-99, 99)
-            num4 = random.randint(-99, 99)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
-            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
-            res1 = num1 / num2
-            res2 = num3 / num4
-            if count_decimal_places(res1) <= 2 and count_decimal_places(res2) <= 2:
-                proverka = True
+            num1 = rand0(-99, 99)
+            num2 = rand0(-99, 99)
+            num3 = rand0(-99, 99)
+            num4 = rand0(-99, 99)
+            print(num1,num2,num3,num4, act1)
+            if num2<0 and num4<0:
+                problem = f'{num1} {act1} ({num2})_?_{num3} {act1} ({num4})'
+            elif num2<0:
+                problem = f'{num1} {act1} ({num2})_?_{num3} {act1} {num4}'
+            elif num4<0:
+                problem = f'{num1} {act1} {num2}_?_{num3} {act1} ({num4})'
             else:
-                proverka = False
+                problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
+            if act1=='/':
+                res1 = num1 / num2
+                res2 = num3 / num4
+                if count_decimal_places(res1) <= 2 and count_decimal_places(res2) <= 2:
+                    proverka = True
+                else:
+                    proverka = False
+            else:
+                proverka = True
     print(problem, answer) #####################
     return problem, answer
 #ВЕЛИЧИНЫ
@@ -184,37 +207,49 @@ def primer(lvl=1):#генерирует примеры в одно действ�
                 okr2 = random.randint(1,4)
                 num1 = round(random.uniform(-99, 99),okr1)
                 num2 = round(random.uniform(-99, 99),okr2)
-        print(act)
+        print(num1,num2,act)
         if act=='*':
-            problem = f'{num1} * {num2} = '
+            if num2 < 0:
+                problem = f'{num1} * ({num2}) = '
+            else:
+                problem = f'{num1} * {num2} = '
             answer = num1*num2
             if lvl<5:
                 proverka=True
-            elif count_decimal_places(answer)<=max(okr1,okr2):
+            elif count_decimal_places(answer)<=4:
                 proverka=True
         if act=='+':
-            problem = f'{num1} + {num2} = '
+            if num2 < 0:
+                problem = f'{num1} + ({num2}) = '
+            else:
+                problem = f'{num1} + {num2} = '
             answer = num1+num2
             if lvl < 5:
                 proverka = True
-            elif count_decimal_places(answer) <= max(okr1, okr2):
+            elif count_decimal_places(answer) <= 4:
                 proverka = True
         if act=='-':
-            problem = f'{num1} - {num2} = '
+            if num2<0:
+                problem = f'{num1} - ({num2}) = '
+            else:
+                problem = f'{num1} - {num2} = '
             answer = num1-num2
             if num1>num2 and lvl<5:
                 proverka = True
-            elif lvl==5 and num1>num2 and count_decimal_places(answer) <= max(okr1,okr2):
+            elif lvl==5 and num1>num2 and count_decimal_places(answer) <= 4:
                 proverka = True
-            elif lvl==6 and count_decimal_places(answer) <= max(okr1,okr2):
+            elif lvl==6 and count_decimal_places(answer) <= 4:
                 proverka = True
         if act=='/':
-            problem = f'{num1} : {num2} = '
+            if num2 < 0:
+                problem = f'{num1} : ({num2}) = '
+            else:
+                problem = f'{num1} : {num2} = '
             answer = num1/num2
             if answer.is_integer() and num2!=0 and num1>num2 and lvl<6:
                 proverka = True
             if lvl==6 and num2!=0:
-                if answer.is_integer() or count_decimal_places(answer)<=2:
+                if answer.is_integer() or count_decimal_places(answer)<=4:
                     proverka=True
     print(problem,answer)#####################
-    return problem,answer
+    return problem,answer   

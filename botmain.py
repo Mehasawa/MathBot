@@ -235,7 +235,7 @@ def handle_message(message):
             user_answer ='none'
             if user_data[user_id]["type_question"]=='number':
                     try:
-                        user_answer = int(message.text)
+                        user_answer = float(message.text)###########!!!!!!!!!!!!!
                     except ValueError:
                         bot.send_message(message.chat.id, "Пожалуйста, введите число.")
             elif user_data[user_id]["type_question"]=='srav':
