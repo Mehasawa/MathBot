@@ -22,18 +22,19 @@ def task_level(message, user_data):#собирает инфу
 def taskcount(message,user_data):#цикл задач
     user_id = message.from_user.id
     tema,lvl,rezhim = task_level(message,user_data)#############
-    if 'Тренировка' in rezhim:
-        COUNT = START1
-    else:
-        COUNT = START2
-    if user_data[user_id]["current_question"] <= COUNT:
-        if 'Арифмет' in tema or 'Вычисл' in tema:
+    problem, answer='empty','empty'
+    # if 'Тренировка' in rezhim:
+    #     COUNT = START1
+    # else:
+    #     COUNT = START2
+    # if user_data[user_id]["current_question"] <= COUNT:
+    if 'Арифмет' in tema or 'Вычисл' in tema:
             print('111')
             problem, answer = primer(lvl)
             #проверка на то что пример уже попадался
             while problem in user_data[user_id]['list']:
                 problem, answer = primer(lvl)
-        if 'Сравн' in tema:
+    if 'Сравн' in tema:
             print('222')
             problem, answer = sravn(lvl)
             # проверка на то что пример уже попадался
@@ -72,6 +73,7 @@ def rand0(n1,n2):
 
 def sravn(lvl=1):
     proverka = False
+    problem,answer='none','none'
     while not proverka:
         if lvl == 2:
             num1 = random.randint(11, 99)
@@ -82,38 +84,43 @@ def sravn(lvl=1):
         elif lvl==3:
             act1 = random.choice(['+', '-'])
             act2 = random.choice(['+', '-'])
-            num1 = random.randint(2, 99)
-            num2 = random.randint(2, 99)
-            num3 = random.randint(2, 99)
-            num4 = random.randint(2, 99)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
-            answer = sravnRes(preobrRes(num1,num2,act1),preobrRes(num3,num4,act1))
-            if num1>num2 and num3>num4:
-                proverka = True
+            while not proverka:###################!!!!!!!!!!!!!!!!!!!!!!!!!!!!test
+                num1 = random.randint(2, 99)
+                num2 = random.randint(2, 99)
+                num3 = random.randint(2, 99)
+                num4 = random.randint(2, 99)
+                problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+                answer = sravnRes(preobrRes(num1,num2,act1),preobrRes(num3,num4,act1))
+                if num1>num2 and num3>num4:
+                    proverka = True
         elif lvl==4:
             act1 = random.choice(['+', '-','*','/'])
             act2 = random.choice(['+', '-','*','/'])
-            num1 = random.randint(12, 990)
-            num2 = random.randint(12, 990)
-            num3 = random.randint(12, 990)
-            num4 = random.randint(12, 990)
-            problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
-            answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
-            if num1 > num2 and num3 > num4:
-                if act1=='/':
-                    res=num1/num2
-                    if res.is_integer():
-                        proverka = True
-                    else:
-                        proverka=False
-                # if act2=='/':
-                    res=num3/num4
-                    if res.is_integer():
-                        proverka = True
-                    else:
-                        proverka = False
-                if act1!='/':# and act2!='/':
+            while not proverka:  ###################!!!!!!!!!!!!!!!!!!!!!!!!!!!!test
+                num1 = random.randint(12, 990)
+                num2 = random.randint(12, 990)
+                num3 = random.randint(12, 990)
+                num4 = random.randint(12, 990)
+                problem = f'{num1} {act1} {num2}_?_{num3} {act1} {num4}'
+                answer = sravnRes(preobrRes(num1, num2, act1), preobrRes(num3, num4, act1))
+                if act1=='+':
                     proverka=True
+                # elif act1=='-' and
+                if num1 > num2 and num3 > num4:
+                    if act1=='/':
+                        res=num1/num2
+                        if res.is_integer():
+                            proverka = True
+                        else:
+                            proverka=False
+                    # if act2=='/':
+                        res=num3/num4
+                        if res.is_integer():
+                            proverka = True
+                        else:
+                            proverka = False
+                    if act1!='/':# and act2!='/':
+                        proverka=True
         elif lvl==5:
             act1 = random.choice(['+', '-', '*', '/'])
             act2 = random.choice(['+', '-', '*', '/'])
@@ -168,6 +175,8 @@ def sravn(lvl=1):
 #ВЫЧИСЛЕНИЯ
 def primer(lvl=1):#генерирует примеры в одно действие
     proverka=False
+    problem,answer='none','none'
+    num1,num2,act=0,0,'%'
     while not proverka:
         if lvl==1:
             act = random.choice(['+','-'])

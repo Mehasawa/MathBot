@@ -1,15 +1,12 @@
 import time
-import random
 import mainbase
 import telebot
 import fromGenerate
 from telebot import types
-import sqlite3
 
 #t.me/AlabugaMathtest_bot.
 from tokenpy import token
 bot = telebot.TeleBot(token)
-
 
 # Состояния бота
 WAITING_FOR_ANSWER = 0
@@ -44,12 +41,15 @@ keyboardSRAVN.add(button1, button2, button3)
 '''
 #ПОКАЗАТЬ КЛАВИАТУРЫ
 def show_first_choice_keyboard(message):
+    print('клава1')
     bot.send_message(message.chat.id, "Выберите режим:", reply_markup=keyboard1)
 
 def show_second_choice_keyboard(message):
+    print('клава2')
     bot.send_message(message.chat.id, "Выберите уровень:", reply_markup=keyboard2)
 
 def show_third_choice_keyboard(message,k):
+    print('клава3')
     spisokTem =[['0 уровень'],
              ['🔥Арифметика','Задачи','Фигуры','Информация'],
              ['🔥Арифметика','Задачи','Фигуры','Периметр','🚀Сравнения'],
@@ -69,7 +69,7 @@ def show_third_choice_keyboard(message,k):
 
 
 def generate_error_message(error_count):
-    print(error_count)
+    # print(error_count)
     if error_count == 1:
         return "ка"
     elif 2 <= error_count <= 4:
@@ -79,6 +79,8 @@ def generate_error_message(error_count):
 
 """Отправляет следующий вопрос пользователю."""
 def send_next_question(chat_id, user_id,message):
+    problem,answer = 'пусто','пусто'
+    keyb=keyboard1
     print('next')####################
     user_data[user_id]["current_question"] += 1
     print(user_data[user_id]["current_question"], user_data[user_id]["score"],)########################
@@ -86,43 +88,51 @@ def send_next_question(chat_id, user_id,message):
         end_time = time.time()#конец времени
         total_time = end_time - user_data[user_id]["start_time"]
         if user_data[user_id]['score']==user_data[user_id]["current_question"]-1:
+            print('прошел без ошибок')
             bot.send_message(chat_id,
                       f"Поздравляем, вы прошли без ошибок.\nВремя прохождения: {total_time:.2f} секунд.")
             mainbase.newscore(user_data[user_id]['studentname'],total_time)
             # start(message)
         else:
+            print('прошел с ошибками')
             bot.send_message(chat_id,
                              f"Поздравляем, у вас {user_data[user_id]['current_question']-user_data[user_id]['score']-1} "
                              f"ошиб{generate_error_message(user_data[user_id]['current_question']-user_data[user_id]['score']-1)}. Время не засчитано.")
             print('#########################')
-            print(user_data[user_id]["state"])
+            # print(user_data[user_id]["state"])
             print(user_data[user_id])
             #
         del user_data[user_id]#удалить сессию
         start(message)#начать новую сессию
         return
 
-    print(user_data)
+    # print(user_data)
     if user_data[user_id]["start"]==1:
+        print('включился старт')
         if user_data[user_id]["type_question"]=='srav':
+            print('сравнения')
             ########################################################################################
             keyb=keyboardSRAVN
             # keyb = types.ReplyKeyboardRemove()
             problem, answer = fromGenerate.taskcount(message, user_data)  # вопрос из генерации
         elif user_data[user_id]["type_question"] == 'base':
+            print('из базы')
             pass
                 # keyb = keyboardBAZA
                 # problem, answer = fromBaseZadachi.taskcount(message, user_data)  # вопрос из базы
         elif user_data[user_id]["type_question"] == 'number':
+            print('арифметика')
             keyb=types.ReplyKeyboardRemove()
             # keyb = keyboardSRAVN
             problem,answer = fromGenerate.taskcount(message,user_data)#вопрос из генерации
         user_data[user_id]['list'].append(problem) #в список примеров
+        print('добавил пример в лист')
         user_data[user_id]["problem"] = problem
         user_data[user_id]["answer"] = answer
         bot.send_message(chat_id, problem ,reply_markup=keyb)
 
 def whatname(message):
+    print('узнает имя')
     if message.from_user.first_name and message.from_user.last_name:
         studentname = f'{message.from_user.first_name} {message.from_user.last_name}'
     elif message.from_user.first_name:
@@ -132,6 +142,7 @@ def whatname(message):
     return studentname
 
 def temaDef(m):
+    print('выбор темы')
     if 'Сравн' in m.text:
         return 'srav'
     elif 'Арифм' in m.text or 'Вычисл' in m.text:
@@ -142,7 +153,7 @@ def temaDef(m):
 #СТАРТОВОЕ СООБЩЕНИЕ:
 @bot.message_handler(commands=['start'])
 def start(message):
-    print(message)
+    print('первое сообщение')
     studentname=whatname(message)
     user_id = message.from_user.id
     # сессия для каждого пользователя
@@ -165,6 +176,7 @@ def start(message):
     bot.send_message(message.chat.id, f"Привет! {studentname} Это MathBot, выберите режим:", reply_markup=keyboard1)
 
 def choicerezhim(message):
+    print('выбор режима')
     user_id = message.from_user.id
     global QUESTIONLEN
     if 'Тренировка' in user_data[user_id]['first_choice']:
@@ -189,20 +201,26 @@ def competitive(message,l,t):
         bot.send_message(message.chat.id,spisokemo[i])
 
     user_data[user_id]['start_time']=time.time()#старт времени
+    print('старт времени')
     user_data[user_id]['studentname']=whatname(message)
     send_next_question(message.chat.id, user_id,message)
 
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
+    print('любое сообщение')
     user_id = message.from_user.id
     # print(user_id)#################################
     if user_id not in user_data:
+        print('нет пользователя')
         bot.send_message(message.chat.id, "Напишите команду /start")
         return
     state_choice = user_data[user_id]["state_choice"]
+    print('начало выборов')
     if user_data[user_id]['start']==0:
+        print('не старт')
         if state_choice  == FIRST_CHOICE:
+            print('выбор1')
             if message.text in ["👍 Тренировка","🚀 Соревнование"]:
                 user_data[user_id]["first_choice"] = message.text
                 user_data[user_id]["state_choice"] = SECOND_CHOICE
@@ -211,6 +229,7 @@ def handle_message(message):
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
 
         elif state_choice == SECOND_CHOICE:
+            print('выбор2')
             if  'Уровень' in message.text:
                 user_data[user_id]["second_choice"] = message.text
                 user_data[user_id]["state_choice"] = THIRD_CHOICE
@@ -219,9 +238,11 @@ def handle_message(message):
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
 
         elif state_choice == THIRD_CHOICE:
+                print('выбор3')
                 user_data[user_id]['type_question']=temaDef(message)
                 user_data[user_id]["third_choice"] = message.text
                 user_data[user_id]['start']=1
+                print('включил старт')
                 bot.send_message(message.chat.id, "Выбор записан.", reply_markup=types.ReplyKeyboardRemove())
                 bot.send_message(message.chat.id, f"#-{user_data[user_id]['first_choice']}"
                                                   f"#-{user_data[user_id]['second_choice']}"
@@ -232,20 +253,25 @@ def handle_message(message):
 
 
     if user_data[user_id]["state"] == WAITING_FOR_ANSWER and user_data[user_id]["start"]:
+            print('начало проверки ответа')
             user_answer ='none'
             if user_data[user_id]["type_question"]=='number':
+                    print('ответ число')
                     try:
                         user_answer = float(message.text)###########!!!!!!!!!!!!!
                     except ValueError:
                         bot.send_message(message.chat.id, "Пожалуйста, введите число.")
             elif user_data[user_id]["type_question"]=='srav':
+                print('ответ знак сравнения')
                 if message.text in ['<','>','=']:
                     user_answer = message.text####
                 else:
                     bot.send_message(message.chat.id, "Пожалуйста, введите правильный знак.")
             correct_answer = user_data[user_id]["answer"]
+
             # print(user_data)
             if user_answer!='none':
+                print('проверка ответа')
                 if user_answer == correct_answer:
                     user_data[user_id]["score"] += 1
                     bot.send_message(message.chat.id, "Правильно!")
@@ -253,10 +279,12 @@ def handle_message(message):
                     bot.send_message(message.chat.id, f"Неправильно! Правильный ответ: {correct_answer}")
 
                 user_data[user_id]["state"] = SENDING_NEXT_QUESTION
+                print('след вопрос')
                 send_next_question(message.chat.id, user_id,message)
             print(user_data)
     if user_id in user_data:
-                    user_data[user_id]["state"] = WAITING_FOR_ANSWER
+        print('переключение на waiting')
+        user_data[user_id]["state"] = WAITING_FOR_ANSWER
 
 
 
