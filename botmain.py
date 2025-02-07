@@ -2,6 +2,7 @@ import time
 import mainbase
 import telebot
 import fromGenerate
+import fromBaseZadachi
 from telebot import types
 
 #t.me/AlabugaMathtest_bot.
@@ -48,17 +49,15 @@ def show_second_choice_keyboard(message):
     print('клава2')
     bot.send_message(message.chat.id, "Выберите уровень:", reply_markup=keyboard2)
 
-def show_third_choice_keyboard(message,k):
+def show_third_choice_keyboardCOMP(message,k):
     print('клава3')
     spisokTem =[['0 уровень'],
-             ['🔥Арифметика','Задачи','Фигуры','Информация'],
-             ['🔥Арифметика','Задачи','Фигуры','Периметр','🚀Сравнения'],
-             ['🔥Вычисления','Площадь','Задачи','Фигуры','Информация','🚀Сравнения'],
-             ['Величины','🔥Арифметика','Задачи на движение','Задачи на работу','Задачи купли-продажи',
-              'Уравнения','Порядок действий','🚀Сравнения'],
-             ['🔥Вычисления','Преобразования','🚀Сравнения','Признаки делимости','Округление',
-              'Задачи','Величины','Геометрия','Координатный луч'],
-             ['🔥Вычисления','НОД и НОК','🚀Сравнения','Задачи','Координатная прямая','Задачи 6.3','Геометрия']]
+             ['🔥Арифметика'],
+             ['🔥Арифметика','🚀Сравнения'],
+             ['🔥Вычисления','🚀Сравнения'],
+             ['Величины','🔥Арифметика','🚀Сравнения'],
+             ['🔥Вычисления','Преобразования','🚀Сравнения','Величины'],
+             ['🔥Вычисления','🚀Сравнения']]
     k=int(k[-1])
     # print(k)
     keyboard3.keyboard=[]
@@ -67,6 +66,24 @@ def show_third_choice_keyboard(message,k):
     keyboard3.add(*buttons)
     bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard3)
 
+def show_third_choice_keyboardTREN(message,k):
+    print('клава3')
+    spisokTem =[['0 уровень'],
+             ['🔥Арифметика','Задачи','Фигуры','Информация'],
+             ['🔥Арифметика','Задачи','Фигуры','Периметр','🚀Сравнения'],
+             ['🔥Вычисления','Площадь','Задачи','Фигуры','Информация','🚀Сравнения'],
+             ['Величины','🔥Арифметика','😐Задачи на движение','😐Задачи на работу','Задачи купли-продажи',
+              'Уравнения','Порядок действий','🚀Сравнения'],
+             ['🔥Вычисления','Преобразования','🚀Сравнения','Признаки делимости','Округление',
+              'Задачи','Величины','😐Геометрия','Координатный луч'],
+             ['🔥Вычисления','НОД и НОК','🚀Сравнения','Задачи','Координатная прямая','Задачи 6.3','😐Геометрия']]
+    k=int(k[-1])
+    # print(k)
+    keyboard3.keyboard=[]
+    buttons = [telebot.types.KeyboardButton(f"{i}") for i in spisokTem[k]]
+    # print(buttons)
+    keyboard3.add(*buttons)
+    bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard3)
 
 def generate_error_message(error_count):
     # print(error_count)
@@ -87,21 +104,27 @@ def send_next_question(chat_id, user_id,message):
     if user_data[user_id]["current_question"] > QUESTIONLEN:
         end_time = time.time()#конец времени
         total_time = end_time - user_data[user_id]["start_time"]
-        if user_data[user_id]['score']==user_data[user_id]["current_question"]-1:
-            print('прошел без ошибок')
-            bot.send_message(chat_id,
-                      f"Поздравляем, вы прошли без ошибок.\nВремя прохождения: {total_time:.2f} секунд.")
-            mainbase.newscore(user_data[user_id]['studentname'],total_time)
-            # start(message)
-        else:
-            print('прошел с ошибками')
-            bot.send_message(chat_id,
-                             f"Поздравляем, у вас {user_data[user_id]['current_question']-user_data[user_id]['score']-1} "
-                             f"ошиб{generate_error_message(user_data[user_id]['current_question']-user_data[user_id]['score']-1)}. Время не засчитано.")
-            print('#########################')
+        if 'Соревн' in user_data[user_id]['first_choice']:
+            if user_data[user_id]['score']==user_data[user_id]["current_question"]-1:
+                print('прошел без ошибок')
+                bot.send_message(chat_id,
+                          f"Поздравляем, вы прошли без ошибок.\nВремя прохождения: {total_time:.2f} секунд.")
+                mainbase.newscore(user_data[user_id]['studentname'],total_time)
+                # start(message)
+            else:
+                print('прошел с ошибками')
+                bot.send_message(chat_id,
+                                 f"Поздравляем, у вас {user_data[user_id]['current_question']-user_data[user_id]['score']-1} "
+                                 f"ошиб{generate_error_message(user_data[user_id]['current_question']-user_data[user_id]['score']-1)}. Время не засчитано.")
+                print('#########################')
             # print(user_data[user_id]["state"])
             print(user_data[user_id])
             #
+        else:
+            bot.send_message(chat_id,
+                             f"Поздравляем, у вас {user_data[user_id]['current_question'] - user_data[user_id]['score'] - 1} "
+                             f"ошиб{generate_error_message(user_data[user_id]['current_question'] - user_data[user_id]['score'] - 1)}.")
+
         del user_data[user_id]#удалить сессию
         start(message)#начать новую сессию
         return
@@ -117,9 +140,19 @@ def send_next_question(chat_id, user_id,message):
             problem, answer = fromGenerate.taskcount(message, user_data)  # вопрос из генерации
         elif user_data[user_id]["type_question"] == 'base':
             print('из базы')
-            pass
-                # keyb = keyboardBAZA
-                # problem, answer = fromBaseZadachi.taskcount(message, user_data)  # вопрос из базы
+            problem, answer, image = fromBaseZadachi.taskcount(message, user_data)  # вопрос из базы
+            if image!='none':
+                user_data[user_id]["image"] = image
+                try:
+                    with open(image, 'rb') as photo:
+                        bot.send_photo(chat_id, photo)#отправляет картинку
+                except FileNotFoundError:
+                    bot.send_message(chat_id, "Файл не найден.")
+                except Exception as e:
+                    bot.send_message(chat_id, f"Произошла ошибка: {e}")
+                # bot.send_photo(chat_id, image)
+            keyb=types.ReplyKeyboardRemove()
+                #
         elif user_data[user_id]["type_question"] == 'number':
             print('арифметика')
             keyb=types.ReplyKeyboardRemove()
@@ -129,6 +162,7 @@ def send_next_question(chat_id, user_id,message):
         print('добавил пример в лист')
         user_data[user_id]["problem"] = problem
         user_data[user_id]["answer"] = answer
+
         bot.send_message(chat_id, problem ,reply_markup=keyb)
 
 def whatname(message):
@@ -168,6 +202,7 @@ def start(message):
         "score": 0,
         "problem": None,
         "answer": None,
+        "image":None,
         "start_time": time.time(),
         'list': [],
         'studentname': studentname,
@@ -190,6 +225,8 @@ def choicerezhim(message):
 #РЕЖИМ ТЕРНИРОВКИ
 def training(message,l,t):
     bot.send_message(message.chat.id, "Режим тренировки 👍!", reply_markup=telebot.types.ReplyKeyboardRemove())
+    user_id = message.from_user.id
+    send_next_question(message.chat.id, user_id, message)
 
 #РЕЖИМ СОРЕВНОВАНИЯ
 def competitive(message,l,t):
@@ -238,7 +275,10 @@ def handle_message(message):
             if  'Уровень' in message.text:
                 user_data[user_id]["second_choice"] = message.text
                 user_data[user_id]["state_choice"] = THIRD_CHOICE
-                show_third_choice_keyboard(message,message.text)
+                if 'Тренир' in user_data[user_id]["first_choice"]:
+                    show_third_choice_keyboardTREN(message,message.text)
+                else:
+                    show_third_choice_keyboardCOMP(message,message.text)
             else:
                 bot.send_message(message.chat.id, "Пожалуйста, выберите из предложенных вариантов")
 
@@ -276,6 +316,13 @@ def handle_message(message):
                     user_answer = message.text####
                 else:
                     bot.send_message(message.chat.id, "Пожалуйста, введите правильный знак.")
+            elif user_data[user_id]["type_question"]=='base':
+                print('из  базы число')
+                try:
+                    user_answer = float(message.text)####
+                except:
+                    bot.send_message(message.chat.id, "Пожалуйста, введите ответ к задаче (число).")
+
             correct_answer = user_data[user_id]["answer"]
 
             # print(user_data)
