@@ -4,7 +4,7 @@ from PIL import Image as pil_image  # Чтобы не было конфликт�
 import os
 
 output_dir = "C:\\Users\\User\\Downloads\\OUTPUT"  # Папка для сохранения картинок
-excel_file = 'C:\\Users\\User\\Downloads\\Telegram Desktop\\Новая таблица.xlsx'
+excel_file = 'C:\\Users\\User\\Downloads\\Telegram Desktop\\БАНК ЗАДАНИЙdisk.xlsx'
 workbook = openpyxl.load_workbook(excel_file, data_only=True)
 
 def extract_data_and_images(excel_file, output_dir):

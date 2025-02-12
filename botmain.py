@@ -75,7 +75,7 @@ def show_third_choice_keyboardTREN(message,k):
              ['Величины','🔥Арифметика','😐Задачи на движение','😐Задачи на работу','Задачи купли-продажи',
               'Уравнения','Порядок действий','🚀Сравнения'],
              ['🔥Вычисления','Преобразования','🚀Сравнения','Признаки делимости','Округление',
-              'Задачи','Величины','😐Геометрия','Координатный луч'],
+              'Задачи','Величины','😐Геометрия','😐Преобразование дробей'],
              ['🔥Вычисления','НОД и НОК','🚀Сравнения','Задачи','Координатная прямая','Задачи 6.3','😐Геометрия']]
     k=int(k[-1])
     # print(k)
@@ -141,6 +141,8 @@ def send_next_question(chat_id, user_id,message):
         elif user_data[user_id]["type_question"] == 'base':
             print('из базы')
             problem, answer, image = fromBaseZadachi.taskcount(message, user_data)  # вопрос из базы
+            answer = str(answer).strip()
+            answer = answer.replace(' ','_')
             if image!='none':
                 user_data[user_id]["image"] = image
                 try:
@@ -177,12 +179,15 @@ def whatname(message):
 
 def temaDef(m):
     print('выбор темы')
-    if 'Сравн' in m.text:
-        return 'srav'
-    elif 'Арифм' in m.text or 'Вычисл' in m.text:
-        return 'number'
+    m=m.text.lower()
+    if 'сравн' in m:
+        return 'srav',''
+    elif 'арифм' in m or 'вычисл' in m:
+        return 'number',''
+    elif 'дроб' in m:
+        return 'base','drob'
     else:
-        return 'base'
+        return 'base',''
 
 #СТАРТОВОЕ СООБЩЕНИЕ:
 @bot.message_handler(commands=['start'])
@@ -199,6 +204,7 @@ def start(message):
         "third_choice": None,
         "current_question": 0,
         "type_question":'number',
+        "pre_type":'',
         "score": 0,
         "problem": None,
         "answer": None,
@@ -284,7 +290,7 @@ def handle_message(message):
 
         elif state_choice == THIRD_CHOICE:
                 print('выбор3')
-                user_data[user_id]['type_question']=temaDef(message)
+                user_data[user_id]['type_question'],user_data[user_id]['pre_type']=temaDef(message)
                 user_data[user_id]["third_choice"] = message.text
                 user_data[user_id]['start']=1
                 print('включил старт')
@@ -316,13 +322,22 @@ def handle_message(message):
                     user_answer = message.text####
                 else:
                     bot.send_message(message.chat.id, "Пожалуйста, введите правильный знак.")
-            elif user_data[user_id]["type_question"]=='base':
+            elif user_data[user_id]["type_question"]=='base' and user_data[user_id]['pre_type']=='':
                 print('из  базы число')
                 try:
                     user_answer = float(message.text)####
                 except:
-                    bot.send_message(message.chat.id, "Пожалуйста, введите ответ к задаче (число).")
-
+                    bot.send_message(message.chat.id, "Пожалуйста, введите ответ к задаче в виде числа.")
+            elif user_data[user_id]["type_question"]=='base' and user_data[user_id]['pre_type']=='drob':
+                print('из  базы дробь')
+                print(message.text)
+                if message.text!=user_data[user_id]["third_choice"]:
+                    user_answer = message.text####
+                else:
+                    bot.send_message(message.chat.id,
+                                     "Введите дробь в формате: числитель/знаменатель, например 1/3")
+                    bot.send_message(message.chat.id,
+                                     "А если дробь смешанная, то после целой части ставим нижнее подчеркивание 1_1/3")
             correct_answer = user_data[user_id]["answer"]
 
             # print(user_data)
