@@ -3,6 +3,8 @@ import random
 START1 = 5
 START2 = 10
 END = 20
+def count0(num1,num2):
+    return str(max(num1,num2) / min(num1,num2)).count('0')
 
 def count_decimal_places(number):
     number_str = str(number)
@@ -35,6 +37,11 @@ def taskcount(message,user_data):#цикл задач
                 problem, answer = primer(lvl)
     if 'Сравн' in tema:
             problem, answer = sravn(lvl)
+            # проверка на то что пример уже попадался
+            while problem in user_data[user_id]['list']:
+                problem, answer = sravn(lvl)
+    if 'Велич' in tema:
+            problem, answer = preob(lvl)
             # проверка на то что пример уже попадался
             while problem in user_data[user_id]['list']:
                 problem, answer = sravn(lvl)
@@ -343,48 +350,52 @@ def primer(lvl=1):#генерирует примеры в одно действ�
                     num2 = round(random.uniform(-99, 99),okr2)
                     problem, answer, proverka = proverkaPrimer(num1, num2, act, lvl)
         print(num1,num2,act)
-        # if act=='*':
-        #     if num2 < 0:
-        #         problem = f'{num1} * ({num2}) = '
-        #     else:
-        #         problem = f'{num1} * {num2} = '
-        #     answer = num1*num2
-        #     if lvl<5:
-        #         proverka=True
-        #     elif count_decimal_places(answer)<=4:
-        #         proverka=True
-        # if act=='+':
-        #     if num2 < 0:
-        #         problem = f'{num1} + ({num2}) = '
-        #     else:
-        #         problem = f'{num1} + {num2} = '
-        #     answer = num1+num2
-        #     if lvl < 5:
-        #         proverka = True
-        #     elif count_decimal_places(answer) <= 4:
-        #         proverka = True
-        # if act=='-':
-        #     if num2<0:
-        #         problem = f'{num1} - ({num2}) = '
-        #     else:
-        #         problem = f'{num1} - {num2} = '
-        #     answer = num1-num2
-        #     if num1>num2 and lvl<5:
-        #         proverka = True
-        #     elif lvl==5 and num1>num2 and count_decimal_places(answer) <= 4:
-        #         proverka = True
-        #     elif lvl==6 and count_decimal_places(answer) <= 4:
-        #         proverka = True
-        # if act=='/':
-        #     if num2 < 0:
-        #         problem = f'{num1} : ({num2}) = '
-        #     else:
-        #         problem = f'{num1} : {num2} = '
-        #     answer = num1/num2
-        #     if answer.is_integer() and num2!=0 and num1>num2 and lvl<6:
-        #         proverka = True
-        #     if lvl==6 and num2!=0:
-        #         if answer.is_integer() or count_decimal_places(answer)<=4:
-        #             proverka=True
     print(problem,answer)#####################
-    return problem,answer   
+    return problem,answer
+
+def preob(lvl=1):
+    vibor = random.randint(0,3)
+    preob0=('длина','масса','площадь','время')
+    preob1 = {0:['мм','см','дм','м','км'],1:['г','кг','ц','т'],2:['с','мин','ч','сут'],3:['мм2','см2','дм2','м2','км2']}
+    preob2=((1000,100,10,1,0.001),(1000,1,0.01,0.001),(86400,1440,24,1),(1000000,10000,100,1,0.000001))
+    proverka=False
+    print(preob0[vibor])
+    while not proverka:
+        n1 = random.randint(0, len(preob1[vibor])-1)
+        n2 = random.randint(0, len(preob1[vibor])-1)
+        if lvl<5 :
+            num = random.randint(1, 29)
+            if n1!=n2 and abs(n2-n1)==1 and n1>n2:
+                    proverka=True
+        elif lvl==5:
+            num = random.randint(1, 99)
+            if vibor!=2:
+                if n1!=n2:
+                    proverka=True
+            else:
+                if n1!=n2 and n1>n2:
+                    proverka=True
+        elif lvl==6:#вписать составные примеры
+            num = round(random.uniform(1, 99),2)
+            if vibor!=2:
+                if n1!=n2:
+                    proverka=True
+            else:
+                if n1!=n2 and n1>n2:
+                    proverka=True
+    v1 = preob1[vibor][n1]
+    v2 = preob1[vibor][n2]
+    print(v1,v2)
+
+    print(f'{num}{v1} = ???{v2}')
+    problem = f'{num}{v1} = ???{v2}'
+    number = num * preob2[vibor][n2] / preob2[vibor][n1]
+    precision = count0(preob2[vibor][n2], preob2[vibor][n1])
+    if n1 < n2:
+            res = float(f"{number:.{precision}f}")
+    else:
+            res = number
+    print('nulls', count0(preob2[vibor][n2], preob2[vibor][n1]))
+    print(f'{num}{v1} = {res}{v2}')
+
+    return problem,res
