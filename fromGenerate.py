@@ -44,7 +44,12 @@ def taskcount(message,user_data):#цикл задач
             problem, answer = preob(lvl)
             # проверка на то что пример уже попадался
             while problem in user_data[user_id]['list']:
-                problem, answer = sravn(lvl)
+                problem, answer = preob(lvl)
+    if 'Округл' in tema:
+            problem, answer = rround(lvl)
+            # проверка на то что пример уже попадался
+            while problem in user_data[user_id]['list']:
+                problem, answer = rround(lvl)
 
     return problem,answer
 
@@ -376,11 +381,13 @@ def preob(lvl=1):
                 if n1!=n2 and n1>n2:
                     proverka=True
         elif lvl==6:#вписать составные примеры
-            num = round(random.uniform(1, 99),2)
+
             if vibor!=2:
+                num = round(random.uniform(1, 99),1)
                 if n1!=n2:
                     proverka=True
             else:
+                num = random.randint(1, 99)
                 if n1!=n2 and n1>n2:
                     proverka=True
     v1 = preob1[vibor][n1]
@@ -395,7 +402,32 @@ def preob(lvl=1):
             res = float(f"{number:.{precision}f}")
     else:
             res = number
+    if res==int(res):
+        res=int(res)
     print('nulls', count0(preob2[vibor][n2], preob2[vibor][n1]))
     print(f'{num}{v1} = {res}{v2}')
 
     return problem,res
+
+def rround(lvl=1):
+    variant = ['тысяч', 'сотен', 'десятков', 'целых единиц', 'десятых', 'сотых', 'тысячных']
+    num1 = 3
+    if lvl>4:
+        randVar = random.randint(0, len(variant) - 1)
+        randNum = round(random.uniform(0, 9999), 5)
+    else:
+        randVar = random.randint(0, 2)
+        randNum = random.randint(0, 9999)
+    print(randNum, randVar)
+
+    probem = f'округлите число {randNum} до {variant[randVar]}'
+    if randVar > 3:
+        answer = round(randNum, randVar - num1)
+    else:
+        answer = round(randNum / pow(10, (num1 - randVar)), 0)
+        # print(randNum/pow(10,(num1-randVar)))
+        # print(round(randNum / pow(10, (num1 - randVar)),0))
+        # print(pow(10,(num1-randVar)))
+        answer *= pow(10, (num1 - randVar))
+        answer = int(answer)
+    return probem, answer
