@@ -219,8 +219,8 @@ def sravn(lvl=1):
                     proverka = True
     print(problem, answer) #####################
     return problem, answer
-#ВЕЛИЧИНЫ
-#ОКРУГЛЕНИЯ
+
+
 #УРАВНЕНИЯ
 #ВЫЧИСЛЕНИЯ
 def proverkaPrimer(*args):
@@ -358,6 +358,7 @@ def primer(lvl=1):#генерирует примеры в одно действ�
     print(problem,answer)#####################
     return problem,answer
 
+#ВЕЛИЧИНЫ
 def preob(lvl=1):
     vibor = random.randint(0,3)
     preob0=('длина','масса','площадь','время')
@@ -409,6 +410,15 @@ def preob(lvl=1):
 
     return problem,res
 
+#ОКРУГЛЕНИЯ
+import  math
+def round_half_up(n, decimals=0):
+    multiplier = 10 ** decimals
+    if n >= 0:
+        return math.floor(n*multiplier + 0.5) / multiplier
+    else:
+        return math.ceil(n*multiplier - 0.5) / multiplier
+
 def rround(lvl=1):
     variant = ['тысяч', 'сотен', 'десятков', 'целых единиц', 'десятых', 'сотых', 'тысячных']
     num1 = 3
@@ -424,7 +434,7 @@ def rround(lvl=1):
     if randVar > 3:
         answer = round(randNum, randVar - num1)
     else:
-        answer = round(randNum / pow(10, (num1 - randVar)), 0)
+        answer = round_half_up(randNum / pow(10, (num1 - randVar)), 0)
         # print(randNum/pow(10,(num1-randVar)))
         # print(round(randNum / pow(10, (num1 - randVar)),0))
         # print(pow(10,(num1-randVar)))
