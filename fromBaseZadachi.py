@@ -5,8 +5,8 @@ from openpyxl import utils
 from PIL import Image as pil_image  # Чтобы не было конфликта имен
 import os
 
-output_dir = "C:\\Users\\User\\Downloads\\OUTPUT"  # Папка для сохранения картинок
-excel_file = 'C:\\Users\\User\\Downloads\\Telegram Desktop\\БАНК ЗАДАНИЙ (2).xlsx'
+output_dir = "OUTPUT"  # Папка для сохранения картинок
+excel_file = '1-6.xlsx'
 workbook = openpyxl.load_workbook(excel_file, data_only=True)
 
 def poiskImage(sheet,cell):
@@ -49,6 +49,7 @@ def taskcount(message,user_data):#цикл задач
     spisok = poiskZadachi(lvl,tema)#список задач на тему (долго)
     sp = random.choice(spisok)
     problem, answer, image = sp['task'], sp['answer'], sp['image']
+    print(sp['answer'],type(sp['answer']))
     while problem in user_data[user_id]['list']:
         sp=random.choice(spisok)
         problem, answer, image = sp['task'],sp['answer'],sp['image']

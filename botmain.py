@@ -345,12 +345,19 @@ def handle_message(message):
             # print(user_data)
             if user_answer!='none':
                 print('проверка ответа')
-                if user_answer == correct_answer:
-                    user_data[user_id]["score"] += 1
-                    bot.send_message(message.chat.id, "Правильно!")
-                else:
-                    bot.send_message(message.chat.id, f"Неправильно! Правильный ответ: {correct_answer}")
-
+                print(user_answer,type(user_answer))
+                try:
+                    if user_answer == correct_answer or float(user_answer)==float(correct_answer):
+                        user_data[user_id]["score"] += 1
+                        bot.send_message(message.chat.id, "Правильно!")
+                    else:
+                        bot.send_message(message.chat.id, f"Неправильно! Правильный ответ: {correct_answer}")
+                except:
+                    if user_answer == correct_answer:
+                        user_data[user_id]["score"] += 1
+                        bot.send_message(message.chat.id, "Правильно!")
+                    else:
+                        bot.send_message(message.chat.id, f"Неправильно! Правильный ответ: {correct_answer}")
                 user_data[user_id]["state"] = SENDING_NEXT_QUESTION
                 print('след вопрос')
                 send_next_question(message.chat.id, user_id,message)
