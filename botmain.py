@@ -22,9 +22,10 @@ QUESTIONLEN=2
 
 # Создание клавиатуры с кнопками и эмодзи
 keyboard1 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-button1 = telebot.types.KeyboardButton("👍 Тренировка")  # Эмодзи 👍
+# button1 = telebot.types.KeyboardButton("👍 Тренировка")  # Эмодзи 👍
 button2 = telebot.types.KeyboardButton("🚀 Соревнование")  # Эмодзи 🚀
-keyboard1.add(button1, button2)
+# keyboard1.add(button1, button2)
+keyboard1.add(button2)
 
 keyboard2 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
 buttons = [telebot.types.KeyboardButton(f"👍 Уровень {i}") for i in range(1, 7)]
